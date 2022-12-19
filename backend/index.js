@@ -12,12 +12,17 @@ app.use(express.json());
 app.use("/images", express.static(path.join(__dirname,"Images")));
 app.use("/", express.static(path.join(__dirname,"public")));
 
-
 // middleware
 app.use('/api/auth',require('./routes/auth'));
 app.use('/api/blog',require('./routes/blog'));
 app.use('/api/upload',require('./middleware/uploadimg'));
 
+// static files
+app.use(express.static(path.join(__dirname,'../dist')))
+
+app.get('*',(req,res) => {
+   res.sendFile(path.join(__dirname,'../dist/index.html'))
+})
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

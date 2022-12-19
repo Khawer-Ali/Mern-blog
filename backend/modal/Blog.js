@@ -17,6 +17,14 @@ const BlogSchema = new Schema({
     img : {
         type: String,
     },
+    avatar : {
+        type: String,
+        required: true,
+    },
+    author : {
+        type: String,
+        required: true,
+    },
     date: {
         type: Date,
         default: Date.now

@@ -8,17 +8,33 @@ const Myblogs = () => {
 
     const { myBlog, myBlogs,editBlog } = useBlogState();
 
-    const [blog, setBlog] = useState({id : "",title:"",description:"",category:"",img:""});
+    const [blog, setBlog] = useState({id : "",title:"",description:"",category:"",image:""});
+    const [img,setImg] = useState(null); 
     const ref = useRef(null);
     const refclose = useRef(null);
 
     const handleOpen = (currentblog) => {
         ref.current.click();
-        setBlog({ id: currentblog._id,title:currentblog.title,description:currentblog.description,category:currentblog.category,img:currentblog.img  })
+        setBlog({ id: currentblog._id,title:currentblog.title,description:currentblog.description,category:currentblog.category,image:currentblog.img  })
     };
 
-    const handleEdit = () => {
-        editBlog(blog.id, blog.title, blog.description, blog.category, blog.img);
+    const handleEdit = async (e) => {
+        e.preventDefault();
+        let formdata = new FormData();
+        const filename = Date.now() + img.name;
+        formdata.append("name", filename);
+        formdata.append("image", img);
+        const newblog = { ...blog, image: filename };
+
+        try {
+            await fetch("http://localhost:5000/api/upload/",{
+                 method:'POST',
+                 body: formdata
+              }); 
+        } catch (error) {
+            console.log(error.message);
+        }
+        editBlog(newblog.id, newblog.title, newblog.description, newblog.category, newblog.image);
         refclose.current.click();
     };
 
@@ -54,19 +70,19 @@ const Myblogs = () => {
                             <button type="button" className="btn-close" ref={refclose} data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
-                            <form action="">
+                            <form action="" onSubmit={handleEdit}>
                                 <div className="mb-3">
                                     <label htmlFor="exampleFormControlInput1" className="form-label">Title :</label>
-                                    <input type="text" className="form-control" value={blog.title} onChange={handleChange} id="exampleFormControlInput1" name='title' placeholder="Enter title" />
+                                    <input type="text" required className="form-control" value={blog.title} onChange={handleChange} id="exampleFormControlInput1" name='title' placeholder="Enter title" />
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="exampleFormControlInput1" className="form-label">Select Image :</label>
                                     <br />
-                                    <input type="file" accept="image/*" name='img' value={blog.img} onChange={handleChange} />
+                                    <input type="file" required defaultValue={blog.img} onChange={(e) => setImg(e.target.files[0])}  name='image' />
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="exampleFormControlTextarea1" className="form-label">Description</label>
-                                    <textarea className="form-control" name="description" value={blog.description} onChange={handleChange} id="exampleFormControlTextarea1" rows="3"></textarea>
+                                    <textarea className="form-control" name="description" value={blog.description} onChange={handleChange}id="exampleFormControlTextarea1" rows="3"></textarea>
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="exampleFormControlInput1" className="form-label">Category :</label>
@@ -75,7 +91,7 @@ const Myblogs = () => {
 
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" className="btn btn-primary" onClick={handleEdit}>Update Note</button>
+                                    <button type="submit" className="btn btn-primary">Update Note</button>
                                 </div>
                             </form>
                         </div>

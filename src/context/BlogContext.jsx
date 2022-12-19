@@ -8,11 +8,13 @@ const BlogState = ({ children }) => {
   const [myBlogs, setMyBlogs] = useState([]);
   const [detail, setDetail] = useState('');
   const [user, setUser] = useState({})
+  const [loading, setloading] = useState(false)
 
   const [singleblog, setSingleblog] = useState({ title: "", description: "" })
 
   // Fetch all Blog
   const getBlog = async () => {
+    setloading(true)
     const response = await fetch("http://localhost:5000/api/blog/getBlog", {
       method: 'GET',
       headers: {
@@ -21,13 +23,15 @@ const BlogState = ({ children }) => {
       }
     });
 
+    
     const json = await response.json();
-    console.log(json);
+    setloading(false)
     setBlogs(json)
   };
 
   // Fetch My Blog
   const myBlog = async () => {
+    setloading(true)
     const response = await fetch("http://localhost:5000/api/blog/myBlog", {
       method: 'GET',
       headers: {
@@ -38,6 +42,7 @@ const BlogState = ({ children }) => {
 
     const json = await response.json();
     console.log(json);
+    setloading(false)
     setMyBlogs(json)
   };
 
@@ -75,14 +80,14 @@ const BlogState = ({ children }) => {
     };
 
   // Create Blog
-  const createBlog = async (title, description, category, img) => {
+  const createBlog = async (title, description, category, img,author,avatar) => {
     const response = await fetch("http://localhost:5000/api/blog/createblog", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'auth-token': localStorage.getItem("authToken")
       },
-      body: JSON.stringify(title, description, category, img)
+      body: JSON.stringify(title, description, category, img,author,avatar)
     });
     const json = await response.json();
     console.log(json);
@@ -90,6 +95,7 @@ const BlogState = ({ children }) => {
 
   // get login user details
   const getUser = async () => {
+    setloading(true)
     const response = await fetch("http://localhost:5000/api/auth/getuser", {
       method: 'GET',
       headers: {
@@ -101,10 +107,11 @@ const BlogState = ({ children }) => {
     const json = await response.json();
     setDetail(json._id)
     setUser(json)
+    setloading(false)
   };
 
 
-  return <BlogContext.Provider value={{ getBlog, blogs, createBlog, setSingleblog, singleblog, myBlog, myBlogs, detail, setDetail,getUser,user ,deleteBlog,editBlog}}>
+  return <BlogContext.Provider value={{ getBlog, blogs, setloading,createBlog,loading, setSingleblog, singleblog, myBlog, myBlogs, detail, setDetail,getUser,user ,deleteBlog,editBlog}}>
     {children}
   </BlogContext.Provider>
 };

@@ -4,6 +4,7 @@ const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const fetchUser = require('../middleware/fetchuser');
+const Blog = require('../modal/Blog');
 const router = express.Router();
 const JWT_SECRET = "Khaw$r *S a Goo*d B)";
 
@@ -37,9 +38,9 @@ router.post("/createuser", [
       name: req.body.name,
       password: secPassword,
       email: req.body.email,
+      profile : req.body.profile
     });
 
-  
     success = true;
     res.json({ success })
 
@@ -61,7 +62,7 @@ router.get("/getuser", fetchUser, async (req, res) => {
   }
 })
 
-// Route 3 : create a user
+// Route 3 : Login a user
 router.post("/login", [
   body('email', 'Enter a valid email').isEmail(),
   body('password', 'Password can not be blank').exists(),
@@ -71,19 +72,22 @@ router.post("/login", [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       success = false;
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ "errors": errors.array() });
     }
   
   const { email, password } = req.body;
 
-  let user = await User.findOne({ email });
-  if (!user) { res.status(400).json({ error: "Please try to login with correct credential" }) }
+  try {
+    let user = await User.findOne({ email });
+  if (!user) { 
+    return res.status(400).json({ "error": "Please try to login with correct credential" }) 
+  }
 
-  const passwordCompare = await bcrypt.compare(password, user.password);
+  const passwordCompare =  bcrypt.compareSync(password, user.password);
 
 
   if (!passwordCompare) {
-    res.status(400).json({ error: "Please try to login with correct credential" })
+    return res.status(400).json({ "error": "Please try to login with correct credential" })
   }
 
   const data = {
@@ -95,7 +99,31 @@ router.post("/login", [
   let authtoken = jwt.sign(data, JWT_SECRET);
   success = true;
   res.json({ success, authtoken })
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
 
 });
+
+// Route 4 : Delete a user
+router.delete("/delete/account",fetchUser,async (req,res) => {
+  let user = await User.findById(req.user.id);
+  let blog = await Blog.find({user : req.user.id});
+
+    if(!user) {
+      res.status(404).send("User Not Found")
+    }
+
+    if (!blog) {
+           return res.status(404).send("Not found")
+      }
+
+    blog = await Blog.deleteMany({user : req.user.id});
+    user = await User.findByIdAndDelete(req.user.id);
+
+    res.status(200).json({success : "User has been deleted",user : user,blog : blog})
+
+})
 
 module.exports = router;

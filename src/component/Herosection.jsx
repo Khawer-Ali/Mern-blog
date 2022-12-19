@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import heroImg from '../images/heroImg.png'
 
 const Herosection = () => {
     return (
@@ -13,8 +14,8 @@ const Herosection = () => {
                     </div>
                 </div>
                 <div className="col-12 col-lg-6">
-                    <div className="right">
-                        <img src="heroImg.png" className='img-fluid' alt="heroImg" />
+                    <div className="right animation">
+                        <img src={heroImg} className='img-fluid' alt="heroImg" />
                     </div>
                 </div>
             </div>

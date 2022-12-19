@@ -3,7 +3,6 @@ const fetchUser = require('../middleware/fetchuser');
 const router = express.Router();
 const Blog = require('../modal/Blog')
 const { body, validationResult } = require('express-validator');
-const { findById } = require('../modal/User');
 
 // ROUTE 1 : Create Blog
 router.post('/createblog', fetchUser, [
@@ -17,11 +16,11 @@ router.post('/createblog', fetchUser, [
     }
 
     try {
-        const { title, description, img, category } = req.body;
+        const { title, description, img, category, avatar, author } = req.body;
         let userId = req.user.id;
 
         const blog = new Blog(
-            { title, description, img, category, user: userId }
+            { title, description, img, category, avatar, author, user: userId }
         );
 
         const savedBlog = await blog.save();
@@ -34,7 +33,7 @@ router.post('/createblog', fetchUser, [
 
 // ROUTE 2 : Fetch Blog
 router.get("/getBlog", async (req, res) => {
-    const blogs = await Blog.find();
+    const blogs = await Blog.find()
     res.json(blogs)
 })
 
@@ -78,41 +77,38 @@ router.put('/editblog/:id', fetchUser, async (req, res) => {
         if (title) {
             newNote.title = title;
         }
-    
+
         if (description) {
             newNote.description = description;
         }
-    
+
         if (category) {
             newNote.category = category;
         }
-    
+
         if (img) {
             newNote.img = img;
         }
-    
+
         //  Find the blog to be updated and update it
         let blog = await Blog.findById(req.params.id);
-    
-        if(!blog) {
+
+        if (!blog) {
             return res.status(404).send("Not found")
         }
-     
-        if(blog.user.toString() !== req.user.id) {
+
+        if (blog.user.toString() !== req.user.id) {
             return res.status(401).send("Not Allowed")
         }
-     
-          blog = await Blog.findByIdAndUpdate(req.params.id,{$set : newNote},{new: true});
-     
-         res.json({blog})
+
+        blog = await Blog.findByIdAndUpdate(req.params.id, { $set: newNote }, { new: true });
+
+        res.json({ blog })
     } catch (error) {
         console.log(error.message);
         res.status(500).send("Internal Server Error")
     }
 
-
-
 })
-
 
 module.exports = router;

@@ -14,7 +14,7 @@ const BlogCard = (props) => {
  
   return (
     <div className='blog-card d-flex align-items-center justify-content-around border'>
-      <di className="content" onClick={handleClick}>
+      <div className="content" onClick={handleClick}>
         <h2>{props.blog.title}</h2>
         <p>{props.blog.description.length <= 170 ? props.blog.description : props.blog.description.slice(0, 200) + '..........'}</p>
          <div className='my-2'>
@@ -28,7 +28,7 @@ const BlogCard = (props) => {
          <span className=''><mark>{props.blog.category}</mark></span>
          </div>
 
-      </di>
+      </div>
       <div className="blogcard-img" onClick={handleClick}>
         <img src={Path + props.blog.img} alt="blogImg" />
       </div>

@@ -5,7 +5,6 @@ import loader from '../images/loader.gif'
 
 const Blogs = () => {
   const { getBlog, blogs, getUser, loading } = useBlogState();
-  console.log(loading);
 
   useEffect(() => {
     getBlog();

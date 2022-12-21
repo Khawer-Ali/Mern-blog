@@ -105,8 +105,9 @@ const BlogState = ({ children }) => {
     });
 
     const json = await response.json();
-    setDetail(json._id)
-    setUser(json)
+    console.log(json.user);
+    setDetail(json.user._id)
+    setUser(json.user)
     setloading(false)
   };
 

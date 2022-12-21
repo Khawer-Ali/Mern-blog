@@ -14,14 +14,12 @@ const CreateBlog = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // setloading(true);
         let formdata = new FormData();
         const filename = Date.now() + img.name;
         formdata.append("name", filename);
         formdata.append("image", img);
         let author = user.name;
         let avatar = user.profile;
-        console.log(avatar,author);
 
         const newblog = { ...blog, img: filename,author: author,avatar : avatar};
 
@@ -40,6 +38,9 @@ const CreateBlog = () => {
     const handleChange = (e) => {
         setblog({ ...blog, [e.target.name]: e.target.value })
     };
+
+  
+
 
     useEffect(() => {
        getUser()

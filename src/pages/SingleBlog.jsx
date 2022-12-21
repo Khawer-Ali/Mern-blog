@@ -7,9 +7,6 @@ const SingleBlog = () => {
 
     let description = singleblog.description.replace('...','.')
 
-
-    console.log(singleblog,8);
-
   return (
     <div className='container'>
         <div className="row">

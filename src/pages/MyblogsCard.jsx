@@ -4,7 +4,6 @@ import { useBlogState } from '../context/BlogContext';
 import { RiDeleteBin5Fill } from 'react-icons/Ri';
 import { FaEdit } from 'react-icons/Fa';
 
-
 const MyblogsCard = (props) => {
     const { setSingleblog, getUser, user,deleteBlog, detail } = useBlogState();
     const navigate = useNavigate();
